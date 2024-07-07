@@ -1,0 +1,28 @@
+; Please config file
+; Leaving this file as is is enough to use plz to build your project.
+; Please will stay on whatever version you currently have until you run
+; 'plz update', when it will download the latest available version.
+;
+; Or you can uncomment the following to pin everyone to a particular version;
+; when you change it all users will automatically get updated.
+; [please]
+; version = 17.4.0
+
+
+[parse]
+preloadsubincludes = ///shell//build_defs:shell
+preloadsubincludes = ///cc//build_defs:c
+
+[Plugin "shell"]
+Target = //plugins:shell
+
+[Plugin "cc"]
+Target = //plugins:cc
+CCTool = i686-elf-gcc
+CPPTool = i686-elf-g++
+DefaultOptCFlags = -std=gnu99 -ffreestanding -O2 -Wall -Wextra -isystem include
+DefaultOptCPPFlags = -std=c++14 -ffreestanding -O2 -Wall -Wextra -isystem include
+DefaultLDFlags = -ffreestanding -O2 -nostdlib -lgcc -shared -isystem include
+
+[Alias "start"]
+cmd = run //:run

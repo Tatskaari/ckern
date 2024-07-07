@@ -1,0 +1,5 @@
+plz-out
+cmake-build-*
+.plzconfig.local
+.idea
+CMakeCache.txt
