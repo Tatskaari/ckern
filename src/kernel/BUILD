@@ -1,6 +1,6 @@
-cc_library(
+c_library(
     name = "kernel",
-    srcs = glob(["*.cpp"]),
-    deps = ["//include/kernel"],
+    srcs = glob(["*.c"]),
+    deps = ["//include/kernel", "//src/libc/stdio"],
     visibility = ["PUBLIC"],
 )

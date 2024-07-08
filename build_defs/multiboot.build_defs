@@ -7,7 +7,7 @@ def freestanding_binary(name, srcs=[], linker_script, visibility=[], deps=[], ou
     """
     out = out or name
     if srcs:
-        deps = [cc_library(
+        deps = [c_library(
             name = tag(name, "main_lib"),
             srcs = srcs,
             deps = deps,
