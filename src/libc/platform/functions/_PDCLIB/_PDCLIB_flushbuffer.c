@@ -24,7 +24,7 @@ extern "C" {
 typedef long ssize_t;
 ssize_t write( int fd, const void * buf, size_t count ) {
     // Write to the terminal if the handle is stdout
-    if (fd == stdout->handle) {
+    if (fd == stdout->handle || fd == stderr->handle) {
         terminal_write(buf, count);
         return count;
     }

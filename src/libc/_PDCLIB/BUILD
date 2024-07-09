@@ -10,5 +10,6 @@ c_library(
         "//src/libc/platform/include",
         "//src/libc/stdlib",
         "//src/libc/string",
+        "//src/libc/platform/functions/_PDCLIB",
     ],
 )
