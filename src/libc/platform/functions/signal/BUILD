@@ -1,8 +1,9 @@
 c_library(
-    name = "ctype",
+    name = "signal",
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [
+        "//include/kernel",
         "//include/libc",
         "//src/libc/platform/include",
     ],

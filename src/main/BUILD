@@ -2,9 +2,14 @@ subinclude("//build_defs:multiboot")
 
 freestanding_binary(
     name = "main",
-    deps=["//src/libc/stdio", "//src/kernel"],
-    srcs = ["main.c", "boot.s"],
+    srcs = [
+        "boot.s",
+        "main.c",
+    ],
     linker_script = "linker.ld",
     visibility = ["PUBLIC"],
+    deps = [
+        "//src/kernel",
+        "//src/libc/stdio",
+    ],
 )
-

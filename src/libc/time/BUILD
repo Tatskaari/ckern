@@ -1,5 +1,5 @@
 c_library(
-    name = "ctype",
+    name = "time",
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [

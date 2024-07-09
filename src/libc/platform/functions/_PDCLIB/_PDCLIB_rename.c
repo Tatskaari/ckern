@@ -9,6 +9,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #ifndef REGTEST
 
@@ -41,16 +42,31 @@
 extern "C" {
 #endif
 
-int renameat( int, const char *, int, const char * );
+int renameat( int from_fd, const char * from_path, int to_fd, const char * to_path) {
+    // TODO not implemented
+    printf("ERROR: renameat %s -> %s: not implemented", from_path, to_path);
+    exit(1);
+}
 
 #ifdef __cplusplus
 }
 #endif
+int AT_FDCWD = 0;
 
-int _PDCLIB_rename( const char * oldpath, const char * newpath )
-{
-    // TODO not implemented
-    return -1;
+int _PDCLIB_rename( const char * oldpath, const char * newpath ) {
+    /* Whether existing newpath is overwritten is implementation-
+       defined. This system call *does* overwrite.
+    */
+    if ( renameat( AT_FDCWD, oldpath, AT_FDCWD, newpath ) != 0 )
+    {
+        /* The 1:1 mapping in _PDCLIB_config.h ensures this works. */
+        *_PDCLIB_errno_func() = errno;
+        return -1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 #endif

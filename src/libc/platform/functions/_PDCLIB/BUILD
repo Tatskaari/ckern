@@ -3,8 +3,8 @@ c_library(
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/libc",
         "//include/kernel",
+        "//include/libc",
         "//src/libc/platform/include",
     ],
 )

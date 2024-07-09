@@ -1,6 +1,6 @@
-cc_library(
+c_library(
     name = "kernel",
-    hdrs=glob(["*.h"]),
-    deps = ["//include/libc"],
+    hdrs = glob("*.h"),
     visibility = ["PUBLIC"],
+    deps = ["//include/libc"],
 )

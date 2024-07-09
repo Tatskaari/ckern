@@ -625,17 +625,16 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #endif /*MMAP_CLEARS */
 #endif  /* WIN32 */
 
-#if defined(DARWIN) || defined(_DARWIN)
-/* Mac OSX docs advise not to use sbrk; it seems better to use mmap */
-#ifndef HAVE_MORECORE
-#define HAVE_MORECORE 0
-#define HAVE_MMAP 1
-/* OSX allocators provide 16 byte alignment */
-#ifndef MALLOC_ALIGNMENT
-#define MALLOC_ALIGNMENT ((size_t)16U)
-#endif
-#endif  /* HAVE_MORECORE */
-#endif  /* DARWIN */
+// Use sblk to extend the heap to allocate more memory. Modern platforms use mmap but that's more complex.
+#define HAVE_MORECORE 1
+#define HAVE_MMAP 0
+// We don't have this stuff implemented but this lib thankfully has ways to opt out.
+#define LACKS_SYS_TYPES_H
+#define LACKS_UNISTD_H
+#define LACKS_SCHED_H
+#define LACKS_SYS_PARAM_H
+#define LACKS_TIME_H
+
 
 #ifndef LACKS_SYS_TYPES_H
 #include <sys/types.h>  /* For size_t */
@@ -1550,9 +1549,6 @@ DLMALLOC_EXPORT int mspace_mallopt(int, int);
 #ifndef LACKS_UNISTD_H
 #include <unistd.h>     /* for sbrk, sysconf */
 #else /* LACKS_UNISTD_H */
-#if !defined(__FreeBSD__) && !defined(__OpenBSD__) && !defined(__NetBSD__)
-extern void*     sbrk(ptrdiff_t);
-#endif /* FreeBSD etc */
 #endif /* LACKS_UNISTD_H */
 
 /* Declarations for locking */

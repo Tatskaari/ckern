@@ -9,6 +9,8 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #ifndef REGTEST
 
@@ -17,7 +19,8 @@
 _PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
 {
     // TODO not implemented
-    return -1;
+    printf("ERROR: Close %s: not implemented", filename);
+    exit(1);
 }
 
 #endif

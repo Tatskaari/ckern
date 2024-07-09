@@ -1,6 +1,6 @@
 c_library(
-    name = "ctype",
-    srcs = glob("*.c"),
+    name = "_dlmalloc",
+    srcs = ["malloc.c"],
     visibility = ["PUBLIC"],
     deps = [
         "//include/libc",

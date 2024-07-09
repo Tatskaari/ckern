@@ -9,6 +9,7 @@
 */
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #ifndef REGTEST
 
@@ -18,7 +19,10 @@
 extern "C" {
 #endif
 
-extern _PDCLIB_Noreturn void _exit( int status ) _PDCLIB_NORETURN;
+_PDCLIB_Noreturn void _exit( int status ) {
+    printf("exit %d. Halting.\n", status);
+    __asm__("hlt");
+}
 
 #ifdef __cplusplus
 }

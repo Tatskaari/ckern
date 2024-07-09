@@ -4,11 +4,11 @@ c_library(
     visibility = ["PUBLIC"],
     deps = [
         "//include/libc",
-        "//src/libc/platform/include",
-        "//src/libc/locale",
-        "//src/libc/stdlib",
-        "//src/libc/inttypes",
-        "//src/libc/string",
         "//src/libc/ctype",
+        "//src/libc/inttypes",
+        "//src/libc/locale",
+        "//src/libc/platform/include",
+        "//src/libc/stdlib",
+        "//src/libc/string",
     ],
 )

@@ -48,11 +48,7 @@ _PDCLIB_int_least64_t _PDCLIB_seek( struct _PDCLIB_file_t * stream, _PDCLIB_int_
             break;
     }
 
-#ifdef __CYGWIN__
-    rc = lseek( stream->handle, offset, whence );
-#else
     rc = lseek64( stream->handle, offset, whence );
-#endif
 
     if ( rc != EOF )
     {

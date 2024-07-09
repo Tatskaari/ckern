@@ -1,12 +1,13 @@
 plugin_repo(
-  name = "shell",
-  revision = "v0.2.0",
-  plugin = "shell-rules",
-  owner = "please-build",
+    name = "shell",
+    owner = "please-build",
+    plugin = "shell-rules",
+    revision = "v0.2.0",
 )
+
 plugin_repo(
-  name = "cc",
-  revision = "v0.4.0",
-  plugin = "cc-rules",
-  owner = "please-build",
+    name = "cc",
+    owner = "please-build",
+    plugin = "cc-rules",
+    revision = "v0.4.0",
 )
