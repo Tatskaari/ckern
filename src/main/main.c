@@ -2,9 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void kernel_main(void)
+int main(void)
 {
-
     /* Initialize terminal interface */
     terminal_initialize();
 
@@ -19,4 +18,5 @@ void kernel_main(void)
     // This should be able to re-use the same memory from heapchars1
     char* heap_chars3 = malloc(100 * sizeof(char));
     printf("heap chars: %lu %lu %lu\n", (unsigned long)heap_chars1, (unsigned long)heap_chars2, (unsigned long)heap_chars3);
+    return 0;
 }
