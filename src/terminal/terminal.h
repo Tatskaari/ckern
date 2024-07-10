@@ -1,9 +1,9 @@
 //
-// Created by jpoole on 7/7/24.
+// Created by jpoole on 7/10/24.
 //
 
-#ifndef CKERN_KERNEL_H
-#define CKERN_KERNEL_H
+#ifndef CKERN_TERMINAL_H
+#define CKERN_TERMINAL_H
 
 #include <stddef.h>
 #include <stdint.h>
@@ -13,9 +13,9 @@ void terminal_initialize(void);
 void terminal_setcolor(uint8_t color);
 void terminal_putentryat(char c, uint8_t color, size_t x, size_t y);
 void terminal_putchar(char c);
-void terminal_write(const char* data, size_t size);
 void terminal_writestring(const char* data);
 void terminal_printf(const char *format, ...);
+int terminal_write(const char* data, int size);
 
 static const size_t VGA_WIDTH = 80;
 static const size_t VGA_HEIGHT = 25;
@@ -44,4 +44,4 @@ static inline uint8_t vga_entry_color(enum vga_color fg, enum vga_color bg);
 static inline uint16_t vga_entry(unsigned char uc, uint8_t color);
 
 
-#endif //CKERN_KERNEL_H
+#endif //CKERN_TERMINAL_H

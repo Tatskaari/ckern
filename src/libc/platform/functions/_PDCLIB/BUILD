@@ -3,10 +3,10 @@ c_library(
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/kernel",
         "//include/libc:errno",
         "//include/libc:locale",
         "//include/libc:stdlib",
+        "//include/libc:stdio",
         "//include/libc:string",
         "//include/libc:time",
         "//include/libc/pdclib",

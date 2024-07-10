@@ -2,13 +2,13 @@
 // Created by jpoole on 7/7/24.
 //
 
-#include <kernel/kernel.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
+#include "../terminal/terminal.h"
 
 size_t terminal_row;
 size_t terminal_column;
@@ -51,10 +51,12 @@ void terminal_putchar(char c) {
     }
 }
 
-void terminal_write(const char *data, size_t size) {
-    for (size_t i = 0; i < size; i++) {
+int terminal_write(const char *data, int size) {
+    for (int i = 0; i < size; i++) {
         terminal_putchar(data[i]);
     }
+    // This makes it easier to be compliant with the file interface
+    return size;
 }
 
 void terminal_writestring(const char *data) {

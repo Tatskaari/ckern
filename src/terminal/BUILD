@@ -1,9 +1,9 @@
 c_library(
-    name = "kernel",
-    srcs = glob(["*.c"]),
+    name = "terminal",
+    srcs = glob("*.c"),
+    hdrs = glob("*.h"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/kernel",
         "//src/libc/stdio",
     ],
 )

@@ -16,11 +16,10 @@
 
 #include "pdclib/_PDCLIB_glue.h"
 
-_PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode )
-{
-    // TODO not implemented
-    printf("ERROR: Close %s: not implemented", filename);
-    exit(1);
+extern _PDCLIB_fd_t open( const char * const filename, unsigned int mode );
+
+_PDCLIB_fd_t _PDCLIB_open( const char * const filename, unsigned int mode ) {
+    return open(filename, mode);
 }
 
 #endif

@@ -9,10 +9,10 @@ freestanding_binary(
     linker_script = "linker.ld",
     visibility = ["PUBLIC"],
     deps = [
-        "//src/kernel",
+        "//src/files",
+        "//src/terminal",
         "//src/libc/stdio",
         "//src/serial",
-        "//src/asm",
         "//src/qemu",
     ],
 )

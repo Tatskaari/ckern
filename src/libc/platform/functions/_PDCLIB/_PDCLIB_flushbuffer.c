@@ -15,22 +15,13 @@
 #include "pdclib/_PDCLIB_glue.h"
 
 #include <errno.h>
-#include <kernel/kernel.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef long ssize_t;
-ssize_t write( int fd, const void * buf, size_t count ) {
-    // Write to the terminal if the handle is stdout
-    if (fd == stdout->handle || fd == stderr->handle) {
-        terminal_write(buf, count);
-        return count;
-    }
-    // unknown FD
-    return -1;
-}
+extern ssize_t write( int fd, const void * buf, size_t count );
 
 #ifdef __cplusplus
 }
@@ -62,7 +53,7 @@ int _PDCLIB_flushbuffer( struct _PDCLIB_file_t * stream )
     */
     for ( retries = _PDCLIB_IO_RETRIES; retries > 0; --retries )
     {
-        rc = ( int )write( stream->handle, stream->buffer + written, stream->bufidx - written );
+        rc = write( stream->handle, stream->buffer + written, stream->bufidx - written );
 
         if ( rc < 0 )
         {
