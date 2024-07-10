@@ -3,5 +3,8 @@ c_library(
     srcs = ["serial.c"],
     hdrs = ["serial.h"],
     visibility = ["PUBLIC"],
-    deps = ["//src/libc/stdio"],
+    deps = [
+        "//src/libc/stdio",
+        "//src/asm",
+    ],
 )

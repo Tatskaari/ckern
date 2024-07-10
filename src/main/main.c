@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 #include "src/serial/serial.h"
+#include "src/asm/asm.h"
+#include "src/qemu/qemu.h"
 
 int main(void)
 {
@@ -14,14 +16,8 @@ int main(void)
     printf("If you're using qemu, to get your mouse back, press ctr-alt or ctr-alt-g\n");
 
     serial_init(COM1);
-    serial_write(COM1, "test");
-    while(1) {
-        char c;
-        serial_read(COM1, &c, 1);
-        if (c == '\r') {
-            printf("\n");
-        } else {
-            printf("%c", c);
-        }
-    }
+    serial_write(COM1, "test\n");
+    char c;
+    serial_read(COM1, &c, 1);
+    qemu_shutdown();
 }

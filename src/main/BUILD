@@ -12,5 +12,7 @@ freestanding_binary(
         "//src/kernel",
         "//src/libc/stdio",
         "//src/serial",
+        "//src/asm",
+        "//src/qemu",
     ],
 )

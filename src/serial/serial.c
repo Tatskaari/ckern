@@ -5,16 +5,7 @@
 #include<stdio.h>
 
 #include "src/serial/serial.h"
-
-inline void outb(uint16_t port, char val) {
-    __asm__ volatile ( "outb %b0, %w1" :: "a"(val), "Nd"(port) : "memory");
-}
-
-inline uint8_t inb(uint16_t port) {
-    char ret;
-    __asm__ volatile ( "inb %w1, %b0" : "=a"(ret) : "Nd"(port) : "memory");
-    return ret;
-}
+#include "src/asm/asm.h"
 
 int serial_init(uint16_t port) {
     // TODO use bitmasks because the tutorial is horrible
