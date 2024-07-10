@@ -1,6 +1,5 @@
 c_library(
-    name = "kernel",
+    name = "pdclib",
     hdrs = glob("*.h"),
     visibility = ["PUBLIC"],
-    deps = ["//include/libc:stdio"],
 )

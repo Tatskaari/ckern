@@ -4,7 +4,6 @@ c_library(
     visibility = ["PUBLIC"],
     deps = [
         "//include/kernel",
-        "//include/libc",
-        "//src/libc/platform/include",
+        "//src/libc/platform/functions/_PDCLIB",
     ],
 )

@@ -3,7 +3,6 @@ c_library(
     srcs = ["malloc.c"],
     visibility = ["PUBLIC"],
     deps = [
-        "//include/libc",
-        "//src/libc/platform/include",
+        "//src/libc/platform/functions/_PDCLIB",
     ],
 )

@@ -3,13 +3,13 @@ c_library(
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/libc",
+        "//include/libc:assert",
+        "//include/libc/pdclib",
         "//src/libc/ctype",
         "//src/libc/inttypes",
         "//src/libc/locale",
-        "//src/libc/platform/include",
+        "//src/libc/platform/functions/_PDCLIB",
         "//src/libc/stdlib",
         "//src/libc/string",
-        "//src/libc/platform/functions/_PDCLIB",
     ],
 )

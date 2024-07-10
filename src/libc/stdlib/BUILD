@@ -3,8 +3,10 @@ c_library(
     srcs = glob("*"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/libc",
-        "//src/libc/platform/include",
+        "//include/libc:stdint",
+        "//include/libc:stdlib",
+        "//include/libc/pdclib",
+        "//src/libc/platform/functions/_PDCLIB",
         "//src/libc/platform/functions/signal",
     ],
 )

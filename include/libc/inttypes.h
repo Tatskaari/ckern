@@ -12,6 +12,7 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include <stdlib.h>
 
 typedef struct _PDCLIB_imaxdiv_t imaxdiv_t;
 

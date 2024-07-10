@@ -5,6 +5,7 @@
 */
 
 #include <stddef.h>
+#include "pdclib/_PDCLIB_internal.h"
 
 #ifndef REGTEST
 

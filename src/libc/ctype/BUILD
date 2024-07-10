@@ -3,7 +3,7 @@ c_library(
     srcs = glob("*.c"),
     visibility = ["PUBLIC"],
     deps = [
-        "//include/libc",
-        "//src/libc/platform/include",
+        "//include/libc:ctype",
+        "//src/libc/platform/functions/_PDCLIB",
     ],
 )
