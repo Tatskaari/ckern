@@ -11,5 +11,6 @@ freestanding_binary(
     deps = [
         "//src/kernel",
         "//src/libc/stdio",
+        "//src/serial",
     ],
 )
