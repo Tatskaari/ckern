@@ -4,6 +4,8 @@ c_library(
     visibility = ["PUBLIC"],
     deps = [
         "//include/libc:time",
+        "//include/libc:stdint",
+        "//include/libc:assert",
         "//src/libc/platform/functions/_PDCLIB",
     ],
 )
