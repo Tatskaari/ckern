@@ -4,10 +4,6 @@
 #include "../terminal/terminal.h"
 #include "../files/files.h"
 
-int write_to_com0(const char *buf, int count) {
-    return serial_write(COM1, buf, count);
-}
-
 int main(void) {
     /* Initialize terminal interface */
     terminal_initialize();

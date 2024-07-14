@@ -1,3 +1,5 @@
+subinclude("//build_defs:multiboot")
+
 c_library(
     name = "files",
     srcs = ["files.c"],
@@ -8,4 +10,15 @@ c_library(
         "//src/libc/string",
         "//src/serial",
     ],
+)
+
+freestanding_test(
+    name = "serial_test",
+    srcs = ["files_test.c"],
+    deps = [
+        "//src/kernel",
+        ":files",
+        "//src/qemu",
+    ],
+    expected_output = "This should print to com0!",
 )

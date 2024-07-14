@@ -16,13 +16,13 @@ filegroup(
 freestanding_binary(
     name = "main",
     srcs = [
-        "boot.s",
         "main.c",
     ],
     visibility = ["PUBLIC"],
     deps = [
         "//src/files",
         "//src/terminal",
+        "//src/kernel",
         "//src/libc/stdio",
         "//src/serial",
         "//src/qemu",
