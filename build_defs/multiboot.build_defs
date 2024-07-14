@@ -1,17 +1,16 @@
 # We need this to load the CC plugin config into CONFIG.CC
 subinclude("///cc//build_defs:cc")
 
-def freestanding_binary(name, srcs=[], linker_script, visibility=[], deps=[], out=None):
+def freestanding_binary(name, srcs=[], linker_script="//src/main:linker.ld", boot="//src/main:boot.s", visibility=[], deps=[], out=None):
     """
     Similar to cc_binary, however builds a freestanding binary, assembled according to the linker script
     """
     out = out or name
-    if srcs:
-        deps = [c_library(
-            name = tag(name, "main_lib"),
-            srcs = srcs,
-            deps = deps,
-        )]
+    deps = [c_library(
+        name = tag(name, "main_lib"),
+        srcs = srcs + [boot],
+        deps = deps,
+    )]
     return genrule(
         name = name,
         srcs = {
@@ -25,4 +24,23 @@ def freestanding_binary(name, srcs=[], linker_script, visibility=[], deps=[], ou
         deps=deps,
         requires=["cc"],
         visibility = visibility,
+    )
+
+def freestanding_test(name, srcs, expected_output, linker_script="//src/main:linker.ld", deps=[]):
+    bin = freestanding_binary(
+        name = tag(name, "bin"),
+        srcs = srcs,
+        linker_script = linker_script,
+        deps = deps,
+    )
+
+    return build_rule(
+        name = name,
+        test_cmd = f"export RES=$($TOOLS_QEMU -display none -serial stdio -kernel $TOOLS_TEST | tee) && echo \"got <$RES>, expected <{expected_output}>\" && [ \"$RES\" = \"{expected_output}\" ]",
+        no_test_output=True,
+        test=True,
+        test_tools = {
+            "TEST": [bin],
+            "QEMU": ["qemu-system-i386"],
+        },
     )
