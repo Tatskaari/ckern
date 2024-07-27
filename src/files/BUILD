@@ -13,7 +13,7 @@ c_library(
 )
 
 freestanding_test(
-    name = "serial_test",
+    name = "files_test",
     srcs = ["files_test.c"],
     expected_output = "This should print to com0!",
     deps = [
