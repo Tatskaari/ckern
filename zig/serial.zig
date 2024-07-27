@@ -18,10 +18,13 @@ pub const SerialPortFile = struct {
     Port: u16,
 
     pub fn init(self: *SerialPortFile) !void {
-        try serial_init(self.Port);
+        const result = serial_init(self.Port);
+        if (result != 0) {
+            return SerialError.InitFailed;
+        }
     }
 
-    pub fn read(self: *SerialPortFile, buffer: []u8, count: usize) !usize {
+    pub fn read(self: *SerialPortFile, buffer: [*]u8, count: usize) !usize {
         const nread = serial_read(self.Port, buffer, count);
         if (nread < 0) {
             return IOError.ReadFailed;
@@ -48,7 +51,7 @@ pub fn sgetc(port: u16) u8 {
     return libasm.inb(port);
 }
 
-pub fn serial_read(port: u16, dest: []u8, count: usize) usize {
+pub export fn serial_read(port: u16, dest: [*]u8, count: usize) usize {
     for (0..count) |i| {
         dest[i] = sgetc(port);
     }
@@ -66,14 +69,14 @@ fn writec(port: u16, c: u8) void {
     libasm.outb(port, c);
 }
 
-fn serial_write(port: u16, data: [*]const u8, count: usize) usize {
+export fn serial_write(port: u16, data: [*]const u8, count: usize) usize {
     for (0..count) |i| {
         writec(port, data[i]);
     }
     return count;
 }
 
-fn serial_init(port: u16) !void {
+export fn serial_init(port: u16) i8 {
     // TODO use bitmasks because the tutorial is horrible
     libasm.outb(port + 1, 0x00); // Disable all interrupts
     libasm.outb(port + 3, 0x80); // Enable DLAB (set baud rate divisor)
@@ -88,10 +91,11 @@ fn serial_init(port: u16) !void {
 
     // Check if serial is faulty (i.e: not same byte as sent)
     if (libasm.inb(port + 0) != 0xAE) {
-        return SerialError.InitFailed;
+        return -1;
     }
 
     // If serial is not faulty set it in normal operation mode
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
     libasm.outb(port + 4, 0x0F);
+    return 0;
 }

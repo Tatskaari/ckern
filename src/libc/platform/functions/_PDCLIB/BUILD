@@ -5,8 +5,8 @@ c_library(
     deps = [
         "//include/libc:errno",
         "//include/libc:locale",
-        "//include/libc:stdlib",
         "//include/libc:stdio",
+        "//include/libc:stdlib",
         "//include/libc:string",
         "//include/libc:time",
         "//include/libc/pdclib",

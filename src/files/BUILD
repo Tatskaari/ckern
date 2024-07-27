@@ -15,10 +15,10 @@ c_library(
 freestanding_test(
     name = "serial_test",
     srcs = ["files_test.c"],
+    expected_output = "This should print to com0!",
     deps = [
-        "//src/kernel",
         ":files",
+        "//src/kernel",
         "//src/qemu",
     ],
-    expected_output = "This should print to com0!",
 )

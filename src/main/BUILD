@@ -12,7 +12,6 @@ filegroup(
     visibility = ["PUBLIC"],
 )
 
-
 freestanding_binary(
     name = "main",
     srcs = [
@@ -21,11 +20,11 @@ freestanding_binary(
     visibility = ["PUBLIC"],
     deps = [
         "//src/files",
-        "//src/terminal",
         "//src/kernel",
         "//src/libc/stdio",
-        "//src/serial",
         "//src/qemu",
-        "//zig:zig",
+        "//src/serial",
+        "//src/terminal",
+        "//zig",
     ],
 )
