@@ -4,6 +4,8 @@
 #include "../terminal/terminal.h"
 #include "../files/files.h"
 
+extern int zig_test();
+
 int main(void) {
     /* Initialize terminal interface */
     terminal_initialize();
@@ -15,8 +17,5 @@ int main(void) {
     register_file_handle(1, "/dev/stdout", NULL, terminal_write);
     register_file_handle(2, "/dev/stderr", NULL, NULL);
 
-    printf("This should print to the vga term\n");
-
-    FILE* com0 = fopen("/dev/com1", "w");
-    fprintf(com0, "This should print to com0\n");
+    printf("from zig: %d\n", zig_test());
 }

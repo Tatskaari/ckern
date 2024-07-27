@@ -14,9 +14,9 @@
 #define ERR_HANDLE_TAKEN -2
 #define ERR_NOT_FOUND -3
 
-static struct FileHandle* handles[MAX_HANDLES] = {0};
+static FileHandle* handles[MAX_HANDLES] = {0};
 
-struct FileHandle* get_file_handle(int fd) {
+FileHandle* get_file_handle(int fd) {
     return handles[fd];
 }
 
@@ -34,7 +34,7 @@ int register_file_handle(int fd, const char* path, ReadFunc* read, WriteFunc* wr
         return ERR_HANDLE_TAKEN;
     }
 
-    handles[fd] = malloc(sizeof(struct FileHandle));
+    handles[fd] = malloc(sizeof(FileHandle));
     handles[fd]->read = read;
     handles[fd]->write = write;
 
@@ -49,7 +49,7 @@ void close_file_handle(int fd) {
 }
 
 int write( int fd, const char * buf, int count) {
-    struct FileHandle* h = get_file_handle(fd);
+    FileHandle* h = get_file_handle(fd);
     if(h == NULL) {
         // unknown FD
         return -1;

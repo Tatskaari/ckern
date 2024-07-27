@@ -8,17 +8,17 @@
 typedef int (ReadFunc)(char* dest, int count);
 typedef int (WriteFunc)(const char* data, int count);
 
-struct FileInfo {
+typedef struct {
     char* path;
-};
+} FileInfo;
 
-struct FileHandle {
-    struct FileInfo info;
+typedef struct {
+    FileInfo info;
     ReadFunc* read;
     WriteFunc* write;
-};
+} FileHandle;
 
-struct FileHandle* get_file_handle(int fd);
+FileHandle* get_file_handle(int fd);
 int register_file_handle(int fd, const char* path, ReadFunc* read, WriteFunc* write);
 void close_file_handle(int fd);
 int open( const char * const filename, unsigned int mode );

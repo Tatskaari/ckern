@@ -1,0 +1,20 @@
+def zig_library(name, root, srcs=[], deps=[], visibility=None):
+    # Move this out into its own rule, so builds are more incremental
+    rt = build_rule(
+        name = tag(name, "rt"),
+        srcs = srcs,
+        outs = [f"{name}.o"],
+        cmd = f"touch dummy.zig && $TOOL build-obj -fsingle-threaded -fcompiler-rt -target x86-freestanding --name {name} dummy.zig",
+        tools = ["/snap/bin/zig"],
+        visibility = visibility,
+    )
+    return build_rule(
+        name = name,
+        srcs = srcs + [root],
+        deps = deps + [rt],
+        outs = [f"lib{name}.a"],
+        cmd = f"$TOOL build-lib -fsingle-threaded -target x86-freestanding --name {name} \"$PKG_DIR\"/{root} $(find -name .o)",
+        visibility = visibility,
+        tools = ["/snap/bin/zig"],
+        requires = ["zig"],
+    )

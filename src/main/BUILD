@@ -26,5 +26,6 @@ freestanding_binary(
         "//src/libc/stdio",
         "//src/serial",
         "//src/qemu",
+        "//zig:zig",
     ],
 )
