@@ -9,8 +9,6 @@ extern int zig_test();
 int main(void) {
     /* Initialize terminal interface */
     terminal_initialize();
-    serial_init(COM1);
-
 
     // Posix expects these registered at these file handles.
     register_file_handle(0, "/dev/stdin", NULL, NULL);
