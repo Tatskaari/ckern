@@ -25,6 +25,6 @@ freestanding_binary(
         "//src/qemu",
         "//src/serial",
         "//src/terminal",
-        "//zig",
+        #"//zig",
     ],
 )
