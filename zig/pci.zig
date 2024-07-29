@@ -6,6 +6,8 @@ const x86 = @import("x86.zig");
 const PCI_CONFIG_ADDRESS = 0xCF8;
 const PCI_CONFIG_DATA = 0xCFC;
 
+const INVALID_VENDOR = 0xFFFF;
+
 const Class = enum(u8) {
     Unclassified,
     MassStorage,
@@ -41,11 +43,35 @@ fn format_class(class: u8) [*:0]const u8 {
     }
 }
 
+//     0               8               16              24             32
+//     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 0x0 |           vendor ID           |           device ID           |
+//     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 0x4 |            command            |             status            |
+//     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 0x8 |  revision ID  |    prog IF    |    subclass   |     class     |
+//     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+// 0xC |cache line size| latency timer |   header type |      bist     |
+//     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+const Offset = enum (u8) {
+    DeviceID = 0x0,
+    VendorID = 0x2,
+    Status = 0x4,
+    Command = 0x6,
+    RevisionID = 0x8,
+    ProgIF = 0x9,
+    Subclass = 0xA,
+    Class = 0xB,
+    CacheLineSize = 0xC,
+    LatencyTimer = 0xD,
+    HeaderType = 0xE,
+    Bist = 0xF,
+};
+
 pub const PciDevice = struct {
     bus: u8,
     slot: u5,
     function: u3,
-    vendor: u16 = undefined,
 
     pub fn address(self: PciDevice, offset: u8) PciAddress {
         return PciAddress{
@@ -58,32 +84,28 @@ pub const PciDevice = struct {
         };
     }
 
-    // 0                   1                   2                   3
-    // 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |           vendor ID           |           device ID           |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |            command            |             status            |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |  revision ID  |    prog IF    |    subclass   |     class     |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    // |cache line size| latency timer |   header type |      bist     |
-    // +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-    pub fn vendor_id(self: PciDevice) u16 {
-        return self.config_read(u16, 0x0);
+    pub fn is_empty(self: PciDevice) bool {
+        return self.vendor_id() == INVALID_VENDOR;
     }
+
+    // Common headers
+    pub fn vendor_id(self: PciDevice) u16 {
+        return self.config_read(u16, @intFromEnum(Offset.VendorID));
+    }
+
     pub fn device(self: PciDevice) u16 {
-        return self.config_read(u16, 0x2);
+        return self.config_read(u16, @intFromEnum(Offset.DeviceID));
     }
     pub fn subclass(self: PciDevice) u8 {
-        return self.config_read(u8, 0xa);
+        return self.config_read(u8, @intFromEnum(Offset.Subclass));
     }
     pub fn class(self: PciDevice) u8 {
-        return self.config_read(u8, 0xb);
+        return self.config_read(u8, @intFromEnum(Offset.Class));
     }
     pub fn header_type(self: PciDevice) u8 {
-        return self.config_read(u8, 0xe);
+        return self.config_read(u8, @intFromEnum(Offset.HeaderType));
     }
+
     pub fn intr_line(self: PciDevice) u8 {
         return self.config_read(u8, 0x3c);
     }
@@ -99,11 +121,11 @@ pub const PciDevice = struct {
         const slot : u8 = @intCast(self.slot);
         const function : u8 = @intCast(self.function);
 
-        _ = libc.printf("%d:%d.%d: ", self.bus, slot, function);
-        _ = libc.printf(" class: %s, subclass: %d, vendor id: %d\n", format_class(self.class()), self.subclass(), self.vendor);
+        _ = libc.printf("Bus %d, slot %d, function %d: ", self.bus, slot, function);
+        _ = libc.printf(" class: %s, subclass: %d, vendor id: %d\n", format_class(self.class()), self.subclass(), self.vendor_id());
     }
 
-    pub inline fn config_read(self: PciDevice, comptime size: type, comptime offset: u8) size {
+    pub inline fn config_read(self: PciDevice, comptime size: type, offset: u8) size {
         // ask for access before reading config
         x86.outl(PCI_CONFIG_ADDRESS, @bitCast(self.address(offset)));
         switch (size) {
@@ -116,25 +138,18 @@ pub const PciDevice = struct {
     }
 };
 
-pub fn init(bus: u8, slot: u5, function: u3) ?PciDevice {
-    var dev = PciDevice{ .bus = bus, .slot = slot, .function = function };
-    dev.vendor = dev.vendor_id();
-    if (dev.vendor == 0xffff) return null;
-    return dev;
+pub fn device(bus: u8, slot: u5, function: u3) PciDevice {
+    return PciDevice{ .bus = bus, .slot = slot, .function = function };
 }
 
 pub fn lspci() void {
-    var slot: u5 = 0;
-    while (slot < 31) : (slot += 1) {
-        // Check if the device exists at that slot first.
-        if (init(0, slot, 0)) |_| {
-            var function: u3 = 0;
-            // 0..7
-            while (function < 7) : (function += 1) {
-                if (init(0, slot, function)) |vf| {
-                    vf.format();
-                }
+    for (0..31) |slot| {
+        for (0..7) |function | {
+            const dev = device(0, @intCast(slot), @intCast(function));
+            if (dev.is_empty()) {
+                continue;
             }
+            dev.format();
         }
     }
 }
