@@ -13,6 +13,6 @@ genrule(
 
 sh_cmd(
     name = "run",
-    cmd = "qemu-system-i386 -serial stdio -kernel $(out_location //src/main) ",
+    cmd = "qemu-system-i386 -no-reboot -serial stdio -kernel $(out_location //src/main) ",
     data = ["//src/main"],
 )

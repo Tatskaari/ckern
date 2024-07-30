@@ -16,7 +16,7 @@ def freestanding_binary(name, srcs=[], linker_script="//src/main:linker.ld", boo
         srcs = {
             "ld": [linker_script],
         },
-        cmd = "$TOOL -T $SRCS_LD -o $OUT -ffreestanding -O2 -nostdlib -Wl,--start-group $(find . -name \"*.o\" -or -name \"*.a\" | sort) -Wl,--end-group -lgcc",
+        cmd = "$TOOL -T $SRCS_LD -g -o $OUT -ffreestanding -O2 -nostdlib -Wl,--start-group $(find . -name \"*.o\" -or -name \"*.a\" | sort) -Wl,--end-group -lgcc",
         outs = [out],
         tools = [CONFIG.CC.CC_TOOL],
         binary = True,

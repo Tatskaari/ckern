@@ -3,15 +3,18 @@ const libc = @import("libc.zig");
 const serial = @import("serial.zig");
 const terminal = @import("terminal.zig");
 const pci = @import("pci.zig");
+const mem = @import("mem.zig");
 
 // TODO move these over to zig
 extern fn terminal_write(data: [*]const u8, size: usize) usize;
 
 export fn run_kernel() i32 {
+    mem.init();
+
     var com1 = serial.SerialPort{.Port = serial.COM1 };
     com1.init() catch {
         _ = libc.printf("Failed to initialize COM1\n");
-        return 10;
+        return -1;
     };
 
     _ = libc.printf("> lspci\n");
