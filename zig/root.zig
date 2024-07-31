@@ -9,8 +9,6 @@ const mem = @import("mem.zig");
 extern fn terminal_write(data: [*]const u8, size: usize) usize;
 
 export fn run_kernel() i32 {
-    mem.init();
-
     var com1 = serial.SerialPort{.Port = serial.COM1 };
     com1.init() catch {
         _ = libc.printf("Failed to initialize COM1\n");

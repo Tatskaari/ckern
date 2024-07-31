@@ -21,7 +21,6 @@ freestanding_binary(
     deps = [
         "//src/files",
         "//src/libc/stdio",
-        "//src/qemu",
         "//src/serial",
         "//src/terminal",
         "//zig",

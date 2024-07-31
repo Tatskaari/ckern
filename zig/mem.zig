@@ -1,23 +1,27 @@
 const std = @import("std");
 
-// This is a placeholder implementation until we can figure out a proper allocator
-extern fn malloc(size: usize) callconv(.C) [*]u8;
-
-pub var alloc : std.heap.FixedBufferAllocator = undefined;
-
-const MEM_SIZE = 1024 * 256; // 256kb
-
 extern const kernel_end: u8;
-var kernel_brk = &kernel_end;
+var kernel_brk : usize = 0;
 
 export fn sbrk( increment: usize) *u8 {
-    const last_brk = kernel_brk;
-    kernel_brk = @ptrFromInt(@intFromPtr(kernel_brk) + increment);
-    // This isn't really a pointer to a u8. It's a watermark in memory so we need to tell zig to trust us here.
-    return @constCast(last_brk);
+    return @ptrFromInt(sbrk_internal(increment));
 }
 
-pub fn init() void {
-    const heap = malloc(MEM_SIZE)[0..MEM_SIZE];
-    alloc = std.heap.FixedBufferAllocator.init(heap);
+fn sbrk_internal (increment: usize) usize  {
+    // Unfortunately this can't be done comptime
+    if (kernel_brk == 0) {
+        kernel_brk = @intFromPtr(&kernel_end);
+    }
+    const last_brk = kernel_brk;
+    kernel_brk = kernel_brk + increment;
+    // This isn't really a pointer to a u8. It's a watermark in memory so we need to tell zig to trust us here.
+    return last_brk;
 }
+
+
+const alloc = std.heap.SbrkAllocator(sbrk_internal);
+
+pub var allocator = std.mem.Allocator{
+    .ptr = @ptrCast(@constCast(&alloc)),
+    .vtable = &alloc.vtable,
+};
