@@ -1,7 +1,6 @@
 const std = @import("std");
-const libc = @import("libc.zig");
 const x86 = @import("x86.zig");
-
+const terminal = @import("terminal.zig");
 // THese are teh ports that PCI uses to enable software to read the PCI config
 const PCI_CONFIG_ADDRESS = 0xCF8;
 const PCI_CONFIG_DATA = 0xCFC;
@@ -121,8 +120,8 @@ pub const PciDevice = struct {
         const slot : u8 = @intCast(self.slot);
         const function : u8 = @intCast(self.function);
 
-        _ = libc.printf("Bus %d, slot %d, function %d: ", self.bus, slot, function);
-        _ = libc.printf(" class: %s, subclass: %d, vendor id: %d\n", format_class(self.class()), self.subclass(), self.vendor_id());
+        terminal.print("Bus {}, slot {}, function {}: ", .{self.bus, slot, function});
+        terminal.print(" class: {s}, subclass: {}, vendor id: {}\n", .{format_class(self.class()), self.subclass(), self.vendor_id()});
     }
 
     pub inline fn config_read(self: PciDevice, comptime size: type, offset: u8) size {
