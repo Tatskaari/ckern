@@ -20,11 +20,10 @@ freestanding_binary(
     visibility = ["PUBLIC"],
     deps = [
         "//src/files",
-        "//src/kernel",
         "//src/libc/stdio",
         "//src/qemu",
         "//src/serial",
         "//src/terminal",
-        #"//zig",
+        "//zig",
     ],
 )
