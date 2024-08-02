@@ -32,8 +32,6 @@ pub var Terminal1 = VGATerminal{
     .colour = undefined,
 };
 
-pub var T1 = &Terminal1;
-
 pub const VGATerminal = struct {
     width: u16,
     height: u16,
@@ -115,5 +113,7 @@ pub fn init() void {
 }
 
 pub fn print(comptime format: []const u8, args: anytype) void {
-    std.fmt.format(T1.writer(), format, args) catch unreachable;
+    const w = Terminal1.writer();
+
+    std.fmt.format(w, format, args) catch unreachable;
 }

@@ -1,28 +1,15 @@
-subinclude("//build_defs:multiboot")
+subinclude("//build_defs:zig")
 
-filegroup(
-    name = "linker.ld",
-    srcs = ["linker.ld"],
-    visibility = ["PUBLIC"],
+c_object(
+    name = "boot",
+    src = "boot.s",
 )
 
-filegroup(
-    name = "boot.s",
-    srcs = ["boot.s"],
-    visibility = ["PUBLIC"],
-)
-
-freestanding_binary(
+zig_library(
     name = "main",
-    srcs = [
-        "main.c",
-    ],
+    srcs = glob("**.zig"),
+    root = "root.zig",
+    linker = "linker.ld",
     visibility = ["PUBLIC"],
-    deps = [
-        "//src/files",
-        "//src/libc/stdio",
-        "//src/serial",
-        "//src/terminal",
-        "//zig",
-    ],
+    deps = [":boot"],
 )
