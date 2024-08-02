@@ -13,12 +13,12 @@ genrule(
 
 sh_cmd(
     name = "run",
-    cmd = "qemu-system-i386 -no-reboot -serial stdio -kernel $(out_location //src/main) ",
+    cmd = "qemu-system-i386 -d int -no-reboot -serial stdio -kernel $(out_location //src/main) ",
     data = ["//src/main"],
 )
 
 sh_cmd(
     name = "debug",
-    cmd = "(pgrep -f qemu-system-i386 | xargs kill -9); qemu-system-i386 -s -S -no-reboot -serial stdio -kernel $(out_location //src/main) &",
+    cmd = "(pgrep -f qemu-system-i386 | xargs kill -9); qemu-system-i386 -d int -s -S -no-reboot -serial stdio -kernel $(out_location //src/main) &",
     data = ["//src/main"],
 )
