@@ -14,17 +14,19 @@ export var multiboot align(4) linksection(".multiboot") = MultibootHeader {
     .checksum = @intCast(((-(@as(i64, MB1_MAGIC) + @as(i64, FLAGS))) & 0xFFFFFFFF)),
 };
 
-var stack: [64 * 1024]u8 align(16) = undefined;
-export fn _start() callconv(.Naked) noreturn {
-    asm volatile (
-        \\ movl %[stk], %esp
-        \\ movl %esp, %ebp
-        \\ call main
-        :
-        : [stk] "{ecx}" (@intFromPtr(&stack) + @sizeOf(@TypeOf(stack))),
-    );
-    while (true) {}
-}
+
+// TODO: figure out why this causes mem violations when the assembly in boot.s doesn't
+// export var stack: [16 * 1024]u8 align(16) linksection(".bss") = undefined;
+// export fn _start() linksection(".text") callconv(.Naked) noreturn {
+//     asm volatile (
+//         \\ mov %[stk], %esp
+//         \\ call main
+//         :
+//         : [stk] "r" (@intFromPtr(&stack) + @sizeOf(@TypeOf(stack))),
+//         : "esp",
+//     );
+//     while (true) {}
+// }
 
 const std = @import("std");
 const serial = @import("serial.zig");

@@ -20,7 +20,7 @@ def zig_library(name, root, linker, srcs=[], deps=[], visibility=None):
         },
         deps = deps + [rt],
         outs = [name],
-        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86-freestanding --name {name} $SRCS_ROOT $(find -name .o)",
+        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86-freestanding --name {name} $SRCS_ROOT $(find -name *.o)",
         visibility = visibility,
         tools = ["/snap/bin/zig"],
         requires = ["zig"],
