@@ -1,6 +1,6 @@
 features_flag = "-mcpu=generic"
 
-def zig_library(name, root, linker, srcs=[], deps=[], visibility=None):
+def zig_kernel(name, root, linker, boot, srcs=[], deps=[], visibility=None):
     # Move this out into its own rule, so builds are more incremental
     rt = build_rule(
         name = tag(name, "rt"),
@@ -17,10 +17,11 @@ def zig_library(name, root, linker, srcs=[], deps=[], visibility=None):
             "srcs": srcs,
             "root": root,
             "linker": linker,
+            "boot": boot,
         },
         deps = deps + [rt],
         outs = [name],
-        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86-freestanding --name {name} $SRCS_ROOT $(find -name *.o)",
+        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86-freestanding --name {name} $SRCS_ROOT $SRCS_BOOT $(find -name *.o)",
         visibility = visibility,
         tools = ["/snap/bin/zig"],
         requires = ["zig"],
