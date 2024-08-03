@@ -1,7 +1,7 @@
 const terminal = @import("terminal.zig");
 
-const KERNEL_CS: u16 = 0x0010;
-const KERNEL_DS: u16 = 0x0018;
+// TODO set up the GDT ourselves rather than guessing
+const KERNEL_CS: u16 = 0x0008;
 
 const IDTEntry = extern struct {
     isr_low: u16,
@@ -12,9 +12,9 @@ const IDTEntry = extern struct {
 };
 
 // Interrupt Descriptor Table Register:
-const IDTR = extern struct {
+const IDTR = packed struct(u48) {
     limit: u16,
-    base: u64,
+    base: u32,
 };
 
 const vectorCount = 32;
@@ -57,9 +57,8 @@ pub fn init() void {
         setDescriptor(vector, @as(*const anyopaque, isrWrapper), 0x8E);
     }
 
-    asm volatile (
-        \\ lidt %[idt]
+    asm volatile ("lidt %[p]"
         :
-        : [idt] "m" (idtr),
+        : [p] "*p" (&idtr.limit),
     );
 }
