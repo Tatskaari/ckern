@@ -51,6 +51,5 @@ export fn main() i32 {
     mem.allocator.free(a);
 
     pci.lspci();
-    asm volatile ("int $0x1F" ::);
     return 0;
 }
