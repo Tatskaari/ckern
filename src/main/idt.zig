@@ -125,6 +125,12 @@ export fn simdErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     while(true){}
 }
 
+// This is just a PoC to prove I can trigger and dispatch software interrupts
+export fn customISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
+    terminal.print("Custom! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
+    while(true){}
+}
+
 pub fn init() void {
     setDescriptor(0, @intFromPtr(&divErrISR), 0x8E);
     setDescriptor(1, @intFromPtr(&debugISR), 0x8E);
@@ -144,6 +150,9 @@ pub fn init() void {
     setDescriptor(17, @intFromPtr(&alignCheckISR), 0x8E);
     setDescriptor(18, @intFromPtr(&machineCheckISR), 0x8E);
     setDescriptor(19, @intFromPtr(&simdErrISR), 0x8E);
+
+    // Just 'cus we can
+    setDescriptor(0x10, @intFromPtr(&customISR), 0x8E);
 
     load();
 }

@@ -51,5 +51,7 @@ export fn main() i32 {
     mem.allocator.free(a);
 
     pci.lspci();
+    // This should trigger our custom interupt!
+    asm volatile ("int $0x10" ::);
     return 0;
 }
