@@ -45,7 +45,6 @@ export fn main() i32 {
         terminal.print("Failed to initialize COM1\n", .{});
         return -1;
     };
-    _ = terminal.Terminal1.writeAll("test") catch unreachable;
 
     const a = mem.allocator.alloc(u8, 1) catch unreachable;
     mem.allocator.free(a);
@@ -53,5 +52,6 @@ export fn main() i32 {
     pci.lspci();
     // This should trigger our custom interupt!
     asm volatile ("int $0x10" ::);
+    terminal.print("This should come after\n", .{});
     return 0;
 }

@@ -42,7 +42,6 @@ export fn divErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
 
 export fn debugISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Debug interupt! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
-    while(true){}
 }
 
 export fn nonMaskableISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
@@ -52,7 +51,6 @@ export fn nonMaskableISR(state: *InterruptStackFrame) callconv(.Interrupt) void 
 
 export fn breakpointISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Breakpoint interupt! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
-    while(true){}
 }
 
 export fn overflowISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
@@ -112,12 +110,10 @@ export fn fpuErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
 
 export fn alignCheckISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Align check (not handled)! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
-    while(true){}
 }
 
 export fn machineCheckISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Machine check (not handled)! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
-    while(true){}
 }
 
 export fn simdErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
@@ -128,7 +124,6 @@ export fn simdErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
 // This is just a PoC to prove I can trigger and dispatch software interrupts
 export fn customISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Custom! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
-    while(true){}
 }
 
 pub fn init() void {
