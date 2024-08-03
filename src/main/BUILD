@@ -1,15 +1,10 @@
 subinclude("//build_defs:zig")
 
-c_object(
-    name = "boot",
-    src = "boot.s",
-)
-
-zig_library(
+zig_kernel(
     name = "main",
     srcs = glob("**.zig"),
-    root = "root.zig",
+    root = "main.zig",
     linker = "linker.ld",
+    boot = "boot.s",
     visibility = ["PUBLIC"],
-    deps = [":boot"],
 )

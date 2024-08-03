@@ -1,3 +1,10 @@
+const std = @import("std");
+const serial = @import("serial.zig");
+const terminal = @import("terminal.zig");
+const pci = @import("pci.zig");
+const mem = @import("mem.zig");
+const idt = @import("idt.zig");
+
 const ALIGN = 1 << 0;
 const MEMINFO = 1 << 1;
 const MB1_MAGIC: u32 = 0x1BADB002;
@@ -28,15 +35,11 @@ export var multiboot align(4) linksection(".multiboot") = MultibootHeader {
 //     while (true) {}
 // }
 
-const std = @import("std");
-const serial = @import("serial.zig");
-const terminal = @import("terminal.zig");
-const pci = @import("pci.zig");
-const mem = @import("mem.zig");
-
 
 export fn main() i32 {
+    idt.init();
     terminal.init();
+
     var com1 = serial.SerialPort{ .Port = serial.COM1 };
     com1.init() catch {
         terminal.print("Failed to initialize COM1\n", .{});
@@ -48,5 +51,7 @@ export fn main() i32 {
     mem.allocator.free(a);
 
     pci.lspci();
+    // This should trigger our custom interupt!
+    asm volatile ("int $0x10" ::);
     return 0;
 }
