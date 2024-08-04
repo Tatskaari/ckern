@@ -1,4 +1,4 @@
-const terminal = @import("terminal.zig");
+const terminal = @import("../../kernel/index.zig").terminal;
 
 const IDTEntry = extern struct {
     isr_low: u16,

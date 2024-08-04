@@ -3,7 +3,7 @@ subinclude("//build_defs:multiboot")
 genrule(
     name = "iso",
     srcs = {
-        "bin": ["//src/main"],
+        "bin": ["//src:main"],
         "boot": ["boot"],
     },
     outs = ["ckern.iso"],

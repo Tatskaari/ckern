@@ -1,6 +1,6 @@
 const std = @import("std");
-const x86 = @import("x86.zig");
-const terminal = @import("terminal.zig");
+const arch = @import("../arch/index.zig");
+const kernel = @import("../kernel/index.zig");
 // THese are teh ports that PCI uses to enable software to read the PCI config
 const PCI_CONFIG_ADDRESS = 0xCF8;
 const PCI_CONFIG_DATA = 0xCFC;
@@ -120,18 +120,18 @@ pub const PciDevice = struct {
         const slot : u8 = @intCast(self.slot);
         const function : u8 = @intCast(self.function);
 
-        terminal.print("Bus {}, slot {}, function {}: ", .{self.bus, slot, function});
-        terminal.print(" class: {s}, subclass: {}, vendor id: {}\n", .{format_class(self.class()), self.subclass(), self.vendor_id()});
+        kernel.terminal.print("Bus {}, slot {}, function {}: ", .{self.bus, slot, function});
+        kernel.terminal.print(" class: {s}, subclass: {}, vendor id: {}\n", .{format_class(self.class()), self.subclass(), self.vendor_id()});
     }
 
     pub inline fn config_read(self: PciDevice, comptime size: type, offset: u8) size {
         // ask for access before reading config
-        x86.outl(PCI_CONFIG_ADDRESS, @bitCast(self.address(offset)));
+        arch.ports.outl(PCI_CONFIG_ADDRESS, @bitCast(self.address(offset)));
         switch (size) {
             // read the correct size
-            u8 => return x86.inb(PCI_CONFIG_DATA),
-            u16 => return x86.inw(PCI_CONFIG_DATA),
-            u32 => return x86.inl(PCI_CONFIG_DATA),
+            u8 => return arch.ports.inb(PCI_CONFIG_DATA),
+            u16 => return arch.ports.inw(PCI_CONFIG_DATA),
+            u32 => return arch.ports.inl(PCI_CONFIG_DATA),
             else => @compileError("pci only support reading up to 32 bits"),
         }
     }

@@ -1,9 +1,7 @@
 const std = @import("std");
-const serial = @import("serial.zig");
-const terminal = @import("terminal.zig");
-const pci = @import("pci.zig");
-const mem = @import("mem.zig");
-const idt = @import("idt.zig");
+const arch = @import("arch/index.zig");
+const kernel = @import("kernel/index.zig");
+const drivers = @import("drivers/index.zig");
 
 const ALIGN = 1 << 0;
 const MEMINFO = 1 << 1;
@@ -16,11 +14,10 @@ const MultibootHeader = extern struct {
     checksum: u32,
 };
 
-export var multiboot align(4) linksection(".multiboot") = MultibootHeader {
+export var multiboot align(4) linksection(".multiboot") = MultibootHeader{
     .flags = FLAGS,
     .checksum = @intCast(((-(@as(i64, MB1_MAGIC) + @as(i64, FLAGS))) & 0xFFFFFFFF)),
 };
-
 
 const STACK_SIZE = 16 * 2024;
 export var stack: [STACK_SIZE]u8 align(16) linksection(".bss") = undefined;
@@ -37,18 +34,13 @@ export fn _start() linksection(".text") callconv(.Naked) noreturn {
     while (true) {}
 }
 
-
 export fn main() i32 {
-    idt.init();
-    terminal.init();
+    arch.init();
+    kernel.init();
 
-
-    const a = mem.allocator.alloc(u8, 1) catch unreachable;
-    mem.allocator.free(a);
-
-    pci.lspci();
+    drivers.pci.lspci();
     // This should trigger our custom interupt!
-    asm volatile ("int $0x10" ::);
-    terminal.print("This should come after\n", .{});
+    asm volatile ("int $0x10");
+    kernel.terminal.print("This should come after\n", .{});
     return 0;
 }

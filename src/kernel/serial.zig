@@ -1,4 +1,4 @@
-const x86 = @import("x86.zig");
+const ports = @import("../arch/index.zig").host.ports;
 
 const SerialError = error{
     InitFailed,
@@ -42,13 +42,13 @@ pub const SerialPort = struct {
 };
 
 pub fn serial_received(port: u16) u8 {
-    return x86.inb(port + 5) & 1;
+    return ports.inb(port + 5) & 1;
 }
 
 pub fn sgetc(port: u16) u8 {
     // Hang until we get a byte
     while (serial_received(port) == 0) {}
-    return x86.inb(port);
+    return ports.inb(port);
 }
 
 pub export fn serial_read(port: u16, dest: [*]u8, count: usize) usize {
@@ -61,12 +61,12 @@ pub export fn serial_read(port: u16, dest: [*]u8, count: usize) usize {
 }
 
 fn is_transmit_empty(port: u16) bool {
-    return x86.inb(port + 5) & 0x20 == 0;
+    return ports.inb(port + 5) & 0x20 == 0;
 }
 
 fn writec(port: u16, c: u8) void {
     while (is_transmit_empty(port)) {}
-    x86.outb(port, c);
+    ports.outb(port, c);
 }
 
 export fn serial_write(port: u16, data: [*]const u8, count: usize) usize {
@@ -78,24 +78,24 @@ export fn serial_write(port: u16, data: [*]const u8, count: usize) usize {
 
 export fn serial_init(port: u16) i8 {
     // TODO use bitmasks because the tutorial is horrible
-    x86.outb(port + 1, 0x00); // Disable all interrupts
-    x86.outb(port + 3, 0x80); // Enable DLAB (set baud rate divisor)
-    x86.outb(port + 0, 0x03); // Set divisor to 3 (lo byte) 38400 baud
-    x86.outb(port + 1, 0x00); //                  (hi byte)
-    x86.outb(port + 3, 0x03); // 8 bits, no parity, one stop bit
-    x86.outb(port + 2, 0xC7); // Enable FIFO, clear them, with 14-byte threshold
-    x86.outb(port + 4, 0x0B); // IRQs enabled, RTS/DSR set
+    ports.outb(port + 1, 0x00); // Disable all interrupts
+    ports.outb(port + 3, 0x80); // Enable DLAB (set baud rate divisor)
+    ports.outb(port + 0, 0x03); // Set divisor to 3 (lo byte) 38400 baud
+    ports.outb(port + 1, 0x00); //                  (hi byte)
+    ports.outb(port + 3, 0x03); // 8 bits, no parity, one stop bit
+    ports.outb(port + 2, 0xC7); // Enable FIFO, clear them, with 14-byte threshold
+    ports.outb(port + 4, 0x0B); // IRQs enabled, RTS/DSR set
 
-    x86.outb(port + 4, 0x1E); // Set in loopback mode, test the serial chip
-    x86.outb(port + 0, 0xAE); // Test serial chip (send byte 0xAE and check if serial returns same byte)
+    ports.outb(port + 4, 0x1E); // Set in loopback mode, test the serial chip
+    ports.outb(port + 0, 0xAE); // Test serial chip (send byte 0xAE and check if serial returns same byte)
 
     // Check if serial is faulty (i.e: not same byte as sent)
-    if (x86.inb(port + 0) != 0xAE) {
+    if (ports.inb(port + 0) != 0xAE) {
         return -1;
     }
 
     // If serial is not faulty set it in normal operation mode
     // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
-    x86.outb(port + 4, 0x0F);
+    ports.outb(port + 4, 0x0F);
     return 0;
 }
