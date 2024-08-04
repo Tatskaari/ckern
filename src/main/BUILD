@@ -5,6 +5,5 @@ zig_kernel(
     srcs = glob("**.zig"),
     root = "main.zig",
     linker = "linker.ld",
-    boot = "boot.s",
     visibility = ["PUBLIC"],
 )

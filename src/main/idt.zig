@@ -9,9 +9,9 @@ const IDTEntry = extern struct {
 };
 
 // Interrupt Descriptor Table Register:
-const IDTR = packed struct(u48) {
+const IDTR = packed struct(u80) {
     limit: u16,
-    base: u32,
+    base: u64,
 };
 
 var idt: [256]IDTEntry = undefined;
