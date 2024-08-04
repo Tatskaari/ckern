@@ -1,8 +1,5 @@
 const terminal = @import("terminal.zig");
 
-// TODO set up the GDT ourselves rather than guessing how the bootloader set this up
-const KERNEL_CS: u16 = 0x0008;
-
 const IDTEntry = extern struct {
     isr_low: u16,
     kernel_cs: u16,
@@ -22,7 +19,8 @@ var idt: [256]IDTEntry = undefined;
 fn setDescriptor(vector: usize, isrPtr: usize, attributes: u8) void {
     var entry = &idt[vector];
     entry.isr_low = @intCast(isrPtr & 0xFFFF);
-    entry.kernel_cs = KERNEL_CS;
+    // TODO we should probably just set this up ourselves so we know what the kernel code segment is
+    entry.kernel_cs = getCS();
     entry.attributes = attributes;
     entry.isr_high = @intCast((isrPtr >> 16) & 0xFFFF);
 }
@@ -124,6 +122,12 @@ export fn simdErrISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
 // This is just a PoC to prove I can trigger and dispatch software interrupts
 export fn customISR(state: *InterruptStackFrame) callconv(.Interrupt) void {
     terminal.print("Custom! eip: 0x{x}, cs: 0x{x}, eflags: 0x{x}\n", .{state.eip, state.cs, state.eflags});
+}
+
+pub inline fn getCS() u16 {
+    return asm volatile ("mov %cs, %[result]"
+        : [result] "=r" (-> u16),
+    );
 }
 
 pub fn init() void {
