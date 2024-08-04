@@ -1,12 +1,11 @@
-features_flag = "-mcpu=generic"
+features_flag = ""
 
-def zig_kernel(name, root, linker, boot, srcs=[], deps=[], visibility=None):
+def zig_kernel(name, root, linker, srcs=[], deps=[], visibility=None):
     # Move this out into its own rule, so builds are more incremental
     rt = build_rule(
         name = tag(name, "rt"),
-        srcs = srcs,
         outs = [f"{name}.o"],
-        cmd = f"touch dummy.zig && $TOOL build-obj {features_flag} -fsingle-threaded -fcompiler-rt -target x86-freestanding --name {name} dummy.zig",
+        cmd = f"touch dummy.zig && $TOOL build-obj {features_flag} -fsingle-threaded -fcompiler-rt -target x86_64-freestanding --name {name} dummy.zig",
         tools = ["/snap/bin/zig"],
         visibility = visibility,
     )
@@ -17,11 +16,10 @@ def zig_kernel(name, root, linker, boot, srcs=[], deps=[], visibility=None):
             "srcs": srcs,
             "root": root,
             "linker": linker,
-            "boot": boot,
         },
         deps = deps + [rt],
         outs = [name],
-        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86-freestanding --name {name} $SRCS_ROOT $SRCS_BOOT $(find -name *.o)",
+        cmd = f"$TOOL build-exe {features_flag} --script $SRCS_LINKER -fsingle-threaded -target x86_64-freestanding --name {name} $SRCS_ROOT $(find -name *.o)",
         visibility = visibility,
         tools = ["/snap/bin/zig"],
         requires = ["zig"],
