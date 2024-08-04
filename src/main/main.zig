@@ -22,18 +22,20 @@ export var multiboot align(4) linksection(".multiboot") = MultibootHeader {
 };
 
 
-// TODO: figure out why this causes mem violations when the assembly in boot.s doesn't
-// export var stack: [16 * 1024]u8 align(16) linksection(".bss") = undefined;
-// export fn _start() linksection(".text") callconv(.Naked) noreturn {
-//     asm volatile (
-//         \\ mov %[stk], %esp
-//         \\ call main
-//         :
-//         : [stk] "r" (@intFromPtr(&stack) + @sizeOf(@TypeOf(stack))),
-//         : "esp",
-//     );
-//     while (true) {}
-// }
+const STACK_SIZE = 16 * 2024;
+export var stack: [STACK_SIZE]u8 align(16) linksection(".bss") = undefined;
+export fn _start() linksection(".text") callconv(.Naked) noreturn {
+    const asmStr = std.fmt.comptimePrint(
+        \\ lea stack + {}, %esp
+        \\ call main
+    , .{STACK_SIZE});
+    asm volatile (asmStr
+        :
+        : [stk] "r" (@intFromPtr(&stack) + @sizeOf(@TypeOf(stack))),
+        : "esp"
+    );
+    while (true) {}
+}
 
 
 export fn main() i32 {
