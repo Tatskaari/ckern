@@ -1,5 +1,3 @@
-subinclude("//build_defs:multiboot")
-
 genrule(
     name = "iso",
     srcs = {

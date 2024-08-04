@@ -11,18 +11,9 @@
 
 [parse]
 preloadsubincludes = ///shell//build_defs:shell
-preloadsubincludes = ///cc//build_defs:c
 
 [Plugin "shell"]
 Target = //plugins:shell
-
-[Plugin "cc"]
-Target = //plugins:cc
-CCTool = i686-elf-gcc
-CPPTool = i686-elf-g++
-DefaultOptCFlags = -g -std=gnu99 -ffreestanding -O2 -Wall -Wextra -isystem include -isystem include/libc -Isrc/libc/platform/include ; TODO get linker labels working
-DefaultOptCPPFlags = -g -std=c++14 -ffreestanding -O2 -Wall -Wextra -isystem include -isystem include/libc -Isrc/libc/platform/include
-DefaultLDFlags = -g -ffreestanding -O2 -nostdlib -lgcc -shared -isystem include
 
 [Alias "start"]
 cmd = run //:run
