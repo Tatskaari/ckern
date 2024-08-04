@@ -42,11 +42,6 @@ export fn main() i32 {
     idt.init();
     terminal.init();
 
-    var com1 = serial.SerialPort{ .Port = serial.COM1 };
-    com1.init() catch {
-        terminal.print("Failed to initialize COM1\n", .{});
-        return -1;
-    };
 
     const a = mem.allocator.alloc(u8, 1) catch unreachable;
     mem.allocator.free(a);

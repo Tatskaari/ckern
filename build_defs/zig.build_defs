@@ -4,7 +4,6 @@ def zig_kernel(name, root, linker, srcs=[], deps=[], visibility=None):
     # Move this out into its own rule, so builds are more incremental
     rt = build_rule(
         name = tag(name, "rt"),
-        srcs = srcs,
         outs = [f"{name}.o"],
         cmd = f"touch dummy.zig && $TOOL build-obj {features_flag} -fsingle-threaded -fcompiler-rt -target x86-freestanding --name {name} dummy.zig",
         tools = ["/snap/bin/zig"],
